@@ -1,0 +1,33 @@
+import React, { createContext, useState, useContext, useCallback } from 'react';
+
+const AlertContext = createContext();
+
+export const useAlert = () => {
+  const context = useContext(AlertContext);
+  if (!context) {
+    throw new Error('useAlert must be used within an AlertProvider');
+  }
+  return context;
+};
+
+export const AlertProvider = ({ children }) => {
+  const [alerts, setAlerts] = useState([]);
+
+  const showAlert = useCallback((msg, type = 'warn') => {
+    const id = Date.now();
+    setAlerts(prev => [...prev, { id, msg, type }]);
+    setTimeout(() => {
+      setAlerts(prev => prev.filter(a => a.id !== id));
+    }, 5500);
+  }, []);
+
+  const removeAlert = (id) => {
+    setAlerts(prev => prev.filter(a => a.id !== id));
+  };
+
+  return (
+    <AlertContext.Provider value={{ alerts, showAlert, removeAlert }}>
+      {children}
+    </AlertContext.Provider>
+  );
+};
