@@ -41,14 +41,7 @@ const Signup = () => {
         className="mb-4"
       />
       
-      <Input
-        label="Monthly Salary (₹)"
-        type="number"
-        placeholder="50000"
-        value={authForm.salary}
-        onChange={(e) => setAuthForm({ ...authForm, salary: e.target.value })}
-        className="mb-6"
-      />
+      
 
       {authError && (
         <p className="text-sm mb-4 text-center" style={{ color: colors.red }}>
