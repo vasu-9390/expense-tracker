@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext } from 'react';
-import { DEMO_USERS } from '../utils/constants';
 import { useAlert } from './AlertContext';
 
 const AuthContext = createContext();
@@ -13,69 +12,126 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [users, setUsers] = useState(DEMO_USERS);
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: "Demo User",
+      email: "demo@example.com",
+      password: "1234",
+      avatar: "DU"
+    }
+  ]);
+  
   const [user, setUser] = useState(null);
   const [authView, setAuthView] = useState('login');
-  const [authForm, setAuthForm] = useState({ name: '', email: '', password: '', salary: '' });
+  const [authForm, setAuthForm] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
   const [authError, setAuthError] = useState('');
   const { showAlert } = useAlert();
 
   const handleLogin = () => {
-    const found = users.find((u) => u.email === authForm.email && u.password === authForm.password);
+    setAuthError('');
+    
+    if (!authForm.email || !authForm.password) {
+      setAuthError('Email and password are required');
+      return false;
+    }
+
+    const found = users.find(function(u) {
+      return u.email === authForm.email && u.password === authForm.password;
+    });
+
     if (!found) {
       setAuthError('Invalid email or password');
       return false;
     }
+
     setUser(found);
-    setAuthError('');
-    showAlert(`Welcome back, ${found.name}!`, 'success');
+    showAlert('Welcome back, ' + found.name + '!', 'success');
+    setAuthForm({ name: '', email: '', password: '' });
     return true;
   };
 
-  const handleSignup = () => {
-    if (!authForm.name || !authForm.email || !authForm.password || !authForm.salary) {
-      setAuthError('All fields are required');
+  const handleSignup = function() {
+    setAuthError('');
+    
+    console.log("Signup - Current authForm:", authForm);
+    
+    if (!authForm.name || authForm.name.trim() === '') {
+      setAuthError('Full name is required');
       return false;
     }
-    if (users.find((u) => u.email === authForm.email)) {
+    
+    if (!authForm.email || authForm.email.trim() === '') {
+      setAuthError('Email is required');
+      return false;
+    }
+    
+    if (!authForm.password || authForm.password.trim() === '') {
+      setAuthError('Password is required');
+      return false;
+    }
+    
+    var emailExists = users.find(function(u) {
+      return u.email === authForm.email;
+    });
+    
+    if (emailExists) {
       setAuthError('Email already registered');
       return false;
     }
-    const newUser = {
+    
+    var nameParts = authForm.name.split(' ');
+    var avatar = '';
+    
+    for (var i = 0; i < nameParts.length; i++) {
+      if (nameParts[i] && nameParts[i][0]) {
+        avatar = avatar + nameParts[i][0];
+      }
+    }
+    avatar = avatar.toUpperCase().slice(0, 2);
+    
+    var newUser = {
       id: Date.now(),
-      name: authForm.name,
-      email: authForm.email,
+      name: authForm.name.trim(),
+      email: authForm.email.trim(),
       password: authForm.password,
-      salary: Number(authForm.salary),
-      avatar: authForm.name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2)
+      avatar: avatar
     };
-    setUsers((prev) => [...prev, newUser]);
+    
+    setUsers([...users, newUser]);
     setUser(newUser);
-    setAuthError('');
     showAlert('Account created successfully!', 'success');
+    setAuthForm({ name: '', email: '', password: '' });
     return true;
   };
 
-  const logout = () => {
+  const logout = function() {
     setUser(null);
     showAlert('Logged out successfully', 'info');
+    setAuthForm({ name: '', email: '', password: '' });
   };
 
-  return (
-    <AuthContext.Provider value={{
-      user,
-      users,
-      authView,
-      authForm,
-      authError,
-      setAuthView,
-      setAuthForm,
-      setAuthError,
-      handleLogin,
-      handleSignup,
-      logout
-    }}>
-      {children}
-    </AuthContext.Provider>
+  return React.createElement(
+    AuthContext.Provider,
+    {
+      value: {
+        user: user,
+        users: users,
+        authView: authView,
+        authForm: authForm,
+        authError: authError,
+        setAuthView: setAuthView,
+        setAuthForm: setAuthForm,
+        setAuthError: setAuthError,
+        handleLogin: handleLogin,
+        handleSignup: handleSignup,
+        logout: logout
+      }
+    },
+    children
   );
 };

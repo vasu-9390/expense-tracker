@@ -4,6 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 const Button = ({ 
   children, 
   onClick, 
+  type = "button",   // 🔥 ADD THIS
   variant = 'primary', 
   fullWidth = false,
   className = '',
@@ -34,6 +35,7 @@ const Button = ({
 
   return (
     <button 
+      type={type}   // 🔥 VERY IMPORTANT
       style={style} 
       onClick={onClick}
       className={`hover:opacity-85 transition-opacity ${className}`}

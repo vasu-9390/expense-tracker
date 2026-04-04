@@ -1,64 +1,133 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import Button from '../common/Button';
-import Input from '../common/Input';
 
 const Signup = () => {
   const { authForm, setAuthForm, authError, handleSignup } = useAuth();
   const { colors } = useTheme();
 
+  const handleChange = (e) => {
+    const fieldName = e.target.name;
+    const fieldValue = e.target.value;
+    
+    console.log("Changing field:", fieldName, "to:", fieldValue);
+    
+    setAuthForm({
+      ...authForm,
+      [fieldName]: fieldValue
+    });
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
+    console.log("Form submitted with:", authForm);
     handleSignup();
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <Input
-        label="Full Name"
-        placeholder="Arjun Mehta"
-        value={authForm.name}
-        onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
-        className="mb-4"
-      />
-      
-      <Input
-        label="Email"
-        type="email"
-        placeholder="you@example.com"
-        value={authForm.email}
-        onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
-        className="mb-4"
-      />
-      
-      <Input
-        label="Password"
-        type="password"
-        placeholder="••••••"
-        value={authForm.password}
-        onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
-        className="mb-4"
-      />
-      
-      <Input
-        label="Monthly Salary (₹)"
-        type="number"
-        placeholder="50000"
-        value={authForm.salary}
-        onChange={(e) => setAuthForm({ ...authForm, salary: e.target.value })}
-        className="mb-6"
-      />
+    <form onSubmit={onSubmit} style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '5px', color: colors?.text || '#000' }}>
+          FULL NAME
+        </label>
+        <input
+          type="text"
+          name="name"
+          placeholder="Enter your full name"
+          value={authForm.name || ''}
+          onChange={handleChange}
+          style={{
+            width: '100%',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            backgroundColor: colors?.inputBg || '#fff',
+            color: colors?.text || '#000',
+            boxSizing: 'border-box'
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '5px', color: colors?.text || '#000' }}>
+          EMAIL
+        </label>
+        <input
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          value={authForm.email || ''}
+          onChange={handleChange}
+          style={{
+            width: '100%',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            backgroundColor: colors?.inputBg || '#fff',
+            color: colors?.text || '#000',
+            boxSizing: 'border-box'
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '5px', color: colors?.text || '#000' }}>
+          PASSWORD
+        </label>
+        <input
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+          value={authForm.password || ''}
+          onChange={handleChange}
+          style={{
+            width: '100%',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            backgroundColor: colors?.inputBg || '#fff',
+            color: colors?.text || '#000',
+            boxSizing: 'border-box'
+          }}
+        />
+      </div>
 
       {authError && (
-        <p className="text-sm mb-4 text-center" style={{ color: colors.red }}>
+        <p style={{ 
+          color: colors?.red || 'red', 
+          textAlign: 'center', 
+          marginBottom: '10px',
+          fontSize: '14px'
+        }}>
           {authError}
         </p>
       )}
 
-      <Button type="submit" fullWidth className="py-3 text-base">
+      <button
+        type="submit"
+        style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: '16px',
+          fontWeight: 'bold'
+        }}
+      >
         Create Account →
-      </Button>
+      </button>
+
+      <p style={{ 
+        textAlign: 'center', 
+        fontSize: '12px', 
+        marginTop: '15px', 
+        color: colors?.muted || '#666' 
+      }}>
+        All fields are required
+      </p>
     </form>
   );
 };
