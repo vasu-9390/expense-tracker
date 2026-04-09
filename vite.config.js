@@ -3,9 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/expense-tracker/',
-  server: {
-    port: 5173,
-    open: true
-  }
+  base: '/expense-tracker/'   // ✅ MUST MATCH YOUR REPO NAME
 })
